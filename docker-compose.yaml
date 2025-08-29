@@ -1,0 +1,40 @@
+services:
+  server:
+    build: .
+    container_name: telegram_server
+    environment:
+      - TELEGRAM_TOKEN=none
+      - GITHUB_TOKEN=none
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=telegram
+      - POSTGRES_PASSWORD=telegram
+      - POSTGRES_NAME=telegram
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=redis
+      - REDIS_DB=0
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+  
+  postgres:
+    image: postgres:latest
+    container_name: telegram_postgres
+    environment:
+      - POSTGRES_USER=telegram
+      - POSTGRES_PASSWORD=telegram
+      - POSTGRES_NAME=telegram
+    volumes:
+      - pqdata:/var/lib/postgres/data
+
+  redis:
+    image: redis:latest
+    container_name: telegram_redis
+    command: ["redis-server", "--requirepass", "redis"]
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pqdata:
+  redis_data:
